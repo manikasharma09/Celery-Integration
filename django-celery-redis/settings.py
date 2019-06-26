@@ -1,6 +1,25 @@
 
 
 import os
+#for adding a schedule
+from celery.schedules import crontab   
+CELERY_BROKER_URL = 'redis://localhost' 
+CELERY_TIMEZONE = 'India/Delhi'   
+# Let's make things happen 
+CELERY_BEAT_SCHEDULE = {
+ 'send-summary-every-hour': {
+       'task': 'summary',
+        # There are 4 ways we can handle time, read further 
+       'schedule': 3600.0,
+        # If you're using any arguments
+       'args': ('We don’t need any',),
+    },
+    # Executes every Friday at 4pm
+    'send-notification-on-friday-afternoon': { 
+         'task': 'app.tasks.send_notification', 
+         'schedule': crontab(hour=16, day_of_week=5),
+        },          
+}
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'rest_framework',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -111,3 +131,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 CELERY_BROKER_URL = 'redis://localhost'
+
+
+
+
